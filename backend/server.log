@@ -1,0 +1,89 @@
+Backend server running on http://localhost:3001
+Available endpoints:
+  GET /api/health - Health check
+  GET /api/trials - Get all trials
+  GET /api/trials/:id - Get trial by ID with enhanced details
+  GET /api/trials/search - Search trials with filters, pagination, and sorting
+  GET /api/eligibility/questions - Get assessment questions
+  POST /api/eligibility/assess - Process assessment and return matches
+  GET /api/eligibility/assessment/:id - Get assessment result by ID
+  GET /api/search/suggestions - Get search suggestions and autocomplete
+  GET /api/geolocation/nearby-trials - Phase 5 Enhanced Geolocation
+  GET /api/analytics/cancer-types - Phase 5 Cancer Type Analytics
+  GET /api/eligibility/insights/:id - Phase 5 Enhanced Assessment Insights
+  GET /api/trials/filters - Get available filter options
+  GET /api/trials/stats - Get trial statistics
+Database loaded with 0 clinical trials
+Phase 2 Core API Endpoints: ✅ COMPLETED
+Phase 3 Search & Filtering Logic: ✅ COMPLETED
+Phase 4 Assessment Engine: ✅ COMPLETED
+Phase 5 Data Enhancement: ✅ COMPLETED
+  - Enhanced mock dataset with 60+ trials covering diverse cancer types
+  - Enhanced eligibility questions and scoring system
+  - Enhanced search and filtering logic
+  - Enhanced assessment engine with detailed insights
+  - Enhanced geolocation features with distance calculations
+  - Enhanced cancer type analytics and recommendations
+Backend server running on http://127.0.0.1:3001
+Available endpoints:
+  GET /api/health - Health check
+  GET /api/trials - Get all trials
+  GET /api/trials/:id - Get trial by ID with enhanced details
+  GET /api/trials/search - Search trials with filters, pagination, and sorting
+  GET /api/eligibility/questions - Get assessment questions
+  POST /api/eligibility/assess - Process assessment and return matches
+  GET /api/eligibility/assessment/:id - Get assessment result by ID
+  GET /api/search/suggestions - Get search suggestions and autocomplete
+
+Implementation Status:
+Phase 2 Core API Endpoints: ✅ COMPLETED
+Phase 3 Search & Filtering Logic: ✅ COMPLETED
+Phase 4 Assessment Engine: ✅ COMPLETED
+
+Frontend should connect to: http://127.0.0.1:3001/api
+ClinicalTrialsApi.searchTrials called with filters: {
+  cancerType: 'cancer',
+  location: '',
+  phase: 'all',
+  ageRange: 'all',
+  searchText: '',
+  status: 'all',
+  sponsor: 'all',
+  treatmentType: 'all',
+  trialSize: 'all',
+  page: 1,
+  limit: 2,
+  sortBy: 'relevance',
+  sortOrder: 'desc'
+}
+Making API request with params: { pageSize: 2, 'query.term': 'cancer', pageToken: undefined }
+Full URL: https://clinicaltrials.gov/api/v2/studies
+API Response status: 200
+API Response data keys: [ 'studies', 'nextPageToken' ]
+API Response totalCount: undefined
+API Response studies length: 2
+Transformed result trials length: 2
+ClinicalTrialsApi.searchTrials called with filters: {
+  cancerType: 'cancer',
+  location: '',
+  phase: 'all',
+  ageRange: 'all',
+  searchText: '',
+  status: 'all',
+  sponsor: 'all',
+  treatmentType: 'all',
+  trialSize: 'all',
+  page: 1,
+  limit: 2,
+  sortBy: 'relevance',
+  sortOrder: 'desc'
+}
+Making API request with params: { pageSize: 2, 'query.term': 'cancer', pageToken: undefined }
+Full URL: https://clinicaltrials.gov/api/v2/studies
+API Response status: 200
+API Response data keys: [ 'studies', 'nextPageToken' ]
+API Response totalCount: undefined
+API Response studies length: 2
+Transformed result trials length: 2
+Error fetching available filters: Request failed with status code 400
+Error fetching trial statistics: Request failed with status code 400
