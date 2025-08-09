@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
 import { apiClient, type ClinicalTrial } from "@/lib/api"
 
 export default function TrialDetailsPage() {
@@ -34,12 +34,13 @@ export default function TrialDetailsPage() {
     currentMedications: '',
     reasonForInterest: ''
   })
-  const [simplifiedContent, setSimplifiedContent] = useState({
-    description: '',
-    eligibility: ''
-  })
+  const [simplifiedContent, setSimplifiedContent] = useState<{
+    description?: string
+    eligibility?: string
+  }>({})
   const [isSimplifying, setIsSimplifying] = useState(false)
   const [showSimplified, setShowSimplified] = useState(true)
+
 
   const trialId = params.id as string
 
@@ -79,6 +80,8 @@ export default function TrialDetailsPage() {
       simplifyTextWithGemini(trial.eligibility, 'eligibility')
     }
   }, [trial])
+
+
 
   const handleApplicationSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -121,38 +124,48 @@ export default function TrialDetailsPage() {
     
     setIsSimplifying(true)
     try {
-      // For now, let's create a simple manual simplification since the API isn't working
-      // This will provide immediate value while we debug the API issue
-      let simplifiedText = ''
-      
-      if (type === 'description') {
-        // Simple manual simplification for description
-        simplifiedText = `This clinical trial is studying ${text.toLowerCase().includes('cancer') ? 'a new treatment for cancer' : 'a new medical treatment'}. 
-        
-The study aims to find better ways to help patients by testing new approaches to care. This involves carefully monitoring participants to ensure their safety while gathering important information about how well the treatment works.
+      const prompt = type === 'description' 
+        ? `Please simplify this clinical trial description to make it easy for a layperson to understand. Keep it accurate but use simple language. Remove medical jargon and explain complex terms. Here's the text: ${text}`
+        : `Please simplify this clinical trial eligibility criteria to make it easy for a layperson to understand. Break down medical terms and explain what each criterion means in simple terms. Here's the text: ${text}`
 
-The original description contains detailed medical and scientific terminology that may be difficult to understand. For specific details about what this trial involves, please consult with your healthcare provider or the trial team.`
+      console.log(`Simplifying ${type} with prompt:`, prompt.substring(0, 100) + '...')
+
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyADkWwDMoju_f6SHGDUkD2PStD2ieg4cgw`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: prompt
+            }]
+          }]
+        })
+      })
+
+      const data = await response.json()
+      console.log('Gemini API response:', data)
+      
+      if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
+        const simplifiedText = data.candidates[0].content.parts[0].text
+        console.log(`Simplified ${type}:`, simplifiedText.substring(0, 100) + '...')
+        setSimplifiedContent(prev => ({
+          ...prev,
+          [type]: simplifiedText
+        }))
       } else {
-        // Simple manual simplification for eligibility
-        simplifiedText = `This section lists the requirements for participating in this clinical trial.
-
-The original eligibility criteria contain medical terminology and specific requirements that determine who can and cannot participate. These criteria are designed to ensure participant safety and the scientific validity of the study.
-
-To understand if you meet the specific requirements for this trial, please:
-• Discuss with your healthcare provider
-• Contact the trial team directly
-• Review the detailed criteria with medical professionals
-
-The original text contains technical medical language that requires professional interpretation.`
+        console.error('Unexpected API response structure:', data)
+        // Create a simple fallback simplified version
+        const fallbackText = type === 'description' 
+          ? `This is a simplified version of the trial description. The original text contains medical terminology that may be difficult to understand. Please consult with your healthcare provider for detailed information about this clinical trial.`
+          : `This is a simplified version of the eligibility criteria. The original text contains medical terminology. Please consult with your healthcare provider to determine if you meet the specific requirements for this trial.`
+        
+        setSimplifiedContent(prev => ({
+          ...prev,
+          [type]: fallbackText
+        }))
       }
-      
-      console.log(`Created simplified ${type}:`, simplifiedText.substring(0, 100) + '...')
-      
-      setSimplifiedContent(prev => ({
-        ...prev,
-        [type]: simplifiedText
-      }))
-      
     } catch (error) {
       console.error('Error simplifying text:', error)
       // Create a simple fallback simplified version
@@ -168,6 +181,8 @@ The original text contains technical medical language that requires professional
       setIsSimplifying(false)
     }
   }
+
+
 
   if (loading) {
     return (
@@ -248,7 +263,6 @@ The original text contains technical medical language that requires professional
                         ? (simplifiedContent.description || trial.description)
                         : trial.description
                       }
-
                     </div>
                   </div>
                 )}
@@ -334,7 +348,6 @@ The original text contains technical medical language that requires professional
                       ? (simplifiedContent.eligibility || trial.eligibility)
                       : trial.eligibility
                     }
-
                   </div>
                 </div>
               )}

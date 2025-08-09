@@ -1,3 +1,6 @@
+"use client"
+
+import { useRouter } from "next/navigation"
 import { BookOpen, Users, Microscope, Shield, Clock, Heart, ChevronRight } from "lucide-react"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -6,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
 export default function LearnPage() {
+  const router = useRouter()
   const phases = [
     {
       phase: "Phase 1",
@@ -312,11 +316,20 @@ export default function LearnPage() {
                 studies that might be right for you.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="text-lg px-8">
+                <Button 
+                  size="lg" 
+                  className="text-lg px-8"
+                  onClick={() => router.push('/search')}
+                >
                   Find Clinical Trials
                   <ChevronRight className="ml-2 h-5 w-5" />
                 </Button>
-                <Button variant="outline" size="lg" className="text-lg px-8 bg-transparent">
+                <Button 
+                  variant="outline" 
+                  size="lg" 
+                  className="text-lg px-8 bg-transparent"
+                  onClick={() => router.push('/eligibility')}
+                >
                   Take Eligibility Assessment
                 </Button>
               </div>
