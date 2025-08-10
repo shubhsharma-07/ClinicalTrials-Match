@@ -30,12 +30,20 @@ export function Chatbot() {
   const inputRef = useRef<HTMLInputElement>(null)
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    }, 100)
   }
 
   useEffect(() => {
     scrollToBottom()
   }, [messages])
+
+  useEffect(() => {
+    if (isOpen) {
+      scrollToBottom()
+    }
+  }, [isOpen])
 
   useEffect(() => {
     if (isOpen && inputRef.current) {
@@ -146,8 +154,8 @@ export function Chatbot() {
           </CardHeader>
           
           <CardContent className="p-0 h-80 flex flex-col">
-            <ScrollArea className="flex-1 p-4">
-              <div className="space-y-4">
+            <ScrollArea className="flex-1 p-4 max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+              <div className="space-y-4 min-h-full pb-2">
                 {messages.map((message) => (
                   <div
                     key={message.id}
@@ -164,7 +172,7 @@ export function Chatbot() {
                         {!message.isUser && (
                           <Bot className="h-4 w-4 mt-0.5 flex-shrink-0" />
                         )}
-                        <div className="text-sm">
+                        <div className="text-sm break-words whitespace-pre-wrap">
                           {message.text}
                         </div>
                         {message.isUser && (
